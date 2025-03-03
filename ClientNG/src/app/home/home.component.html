@@ -1,0 +1,177 @@
+<div class="container">
+
+  <div class="row">
+  <div class="col-md-4">
+    <h2>Add Company</h2>
+    
+    <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Name</label>
+        <input
+          type="text"
+          formControlName="name"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+        />
+        <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+          <div *ngIf="f['name'].errors['required']">Name is required</div>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label>Exchange</label>
+        <input
+          type="text"
+          formControlName="exchange"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['exchange'].errors }"
+        />
+        <div *ngIf="submitted && f['exchange'].errors" class="invalid-feedback">
+          <div *ngIf="f['exchange'].errors['required']">Exchange is required</div>
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <label>StockTicker</label>
+        <input
+          type="text"
+          formControlName="stockTicker"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['stockTicker'].errors }"
+        />
+        <div *ngIf="submitted && f['stockTicker'].errors" class="invalid-feedback">
+          <div *ngIf="f['stockTicker'].errors['required']">StockTicker is required</div>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label>Isin</label>
+        <input
+          type="text"
+          formControlName="isin"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['isin'].errors }"
+        />
+        <div *ngIf="submitted && f['isin'].errors" class="invalid-feedback">
+          <div *ngIf="f['isin'].errors['required']">Isin is required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Website</label>
+        <input
+          type="text"
+          formControlName="website"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['website'].errors }"
+        />
+       
+      </div>
+
+
+
+
+
+      
+      <button type="submit" class="btn btn-primary">Salveaza</button>
+    </form>
+
+    
+
+
+    
+  </div>
+  <div class="col-md-8">
+
+    <h2>Lista companii</h2>
+    <div class="search-hero">
+      <input class="form-control" type="text" name="search" [(ngModel)]="searchIsin" (ngModelChange)="isinChanged()" autocomplete="off" placeholder="&#61442;  Start searching for Isin">
+    </div>
+
+
+    <table class="table table-bordered" cellpadding=0 cellspacing=0>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Exchange</th>
+          <th>StockTicker</th>
+          <th>Isin</th>
+          <th>Website</th>
+          <th>#</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="
+            let post of collection
+              | paginate
+                : {
+                    itemsPerPage: 10,
+                    currentPage: p
+                   
+                  };
+            let i = index
+          "
+        >
+          <th scope="row">{{ post.id }}</th>
+          <td>
+            <div class="editable-cell" [hidden]="enableEdit && enableEditIndex == i">
+              {{ post.name}}
+            </div>
+            <input [hidden]="!(enableEdit && enableEditIndex == i)" type="text" nz-input [(ngModel)]="post.name"/>
+
+          </td>
+          <td>
+            <div class="editable-cell" [hidden]="enableEdit && enableEditIndex == i">
+              {{ post.exchange}}
+            </div>
+            <input [hidden]="!(enableEdit && enableEditIndex == i)" type="text" nz-input [(ngModel)]="post.exchange"/>
+
+          </td>
+          <td>
+            <div class="editable-cell" [hidden]="enableEdit && enableEditIndex == i">
+              {{ post.stockTicker}}
+            </div>
+            <input [hidden]="!(enableEdit && enableEditIndex == i)" type="text" nz-input [(ngModel)]="post.stockTicker"/>
+
+          </td>
+          <td>
+            <div class="editable-cell" [hidden]="enableEdit && enableEditIndex == i">
+              {{ post.isin}}
+            </div>
+            <input [hidden]="!(enableEdit && enableEditIndex == i)" type="text" nz-input [(ngModel)]="post.isin"/>
+
+          </td>
+          <td>
+            <div class="editable-cell" [hidden]="enableEdit && enableEditIndex == i">
+              {{ post.website}}
+            </div>
+            <input [hidden]="!(enableEdit && enableEditIndex == i)" type="text" nz-input [(ngModel)]="post.website"/>
+
+          </td>
+          <td>
+            <button *ngIf="enableEdit && enableEditIndex == i" (click)="enableEdit=false" class="btn page-secondary-action-btn" ng-click="cancel()">Cancel</button>
+            <button *ngIf="enableEdit && enableEditIndex == i" id="saveBtn" class="btn page-primary-action-btn" (click)="saveSegment(post)" type="submit">Save</button>
+            <a href="#" class="table-row-action edit-action" *ngIf="!enableEdit" (click)="enableEditMethod($event, i)">
+              edit
+              </a>
+              <a href="#" class="table-row-action edit-action" *ngIf="!enableEdit" (click)="deleteMethod($event, post)">
+                delete
+                </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
+
+
+  </div>
+</div>
+</div>
