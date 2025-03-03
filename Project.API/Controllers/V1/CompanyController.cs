@@ -171,7 +171,6 @@ namespace Project.API.Controllers.V1
 
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Create(CompanyCreateViewModel model, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
