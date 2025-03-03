@@ -8,6 +8,7 @@ using Project.Core.Common;
 using Project.Core.Entities.Business;
 using Project.Core.Entities.General;
 using Project.Core.Interfaces.IServices;
+using System.Text.RegularExpressions;
 
 namespace Project.API.Controllers.V1
 {
@@ -25,7 +26,7 @@ namespace Project.API.Controllers.V1
         {
             _logger = logger;
             _companyService = companyService;
-            _memoryCache = memoryCache; 
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
@@ -165,11 +166,12 @@ namespace Project.API.Controllers.V1
 
                 return StatusCode(StatusCodes.Status500InternalServerError, errorResponse);
             }
-            
+
         }
 
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Create(CompanyCreateViewModel model, CancellationToken cancellationToken)
         {
             if (ModelState.IsValid)
@@ -188,6 +190,26 @@ namespace Project.API.Controllers.V1
                             Message = message
                         }
                     });
+                }
+
+                if (model.Isin.Length > 2)
+                {
+                    var l1 = Char.IsNumber(model.Isin.ToArray()[0]);
+                    var l2 = Char.IsNumber(model.Isin.ToArray()[1]);
+                    if (l1 || l2)
+                    {
+                        message = $"The company Isin- '{model.Isin}' has a wrong format.First two chars must be letters";
+                        return StatusCode(StatusCodes.Status400BadRequest, new ResponseViewModel<CompanyViewModel>
+                        {
+                            Success = false,
+                            Message = message,
+                            Error = new ErrorViewModel
+                            {
+                                Code = "NO_LETTER",
+                                Message = message
+                            }
+                        });
+                    }
                 }
 
                 if (await _companyService.IsExists("Isin", model.Isin, cancellationToken))
@@ -335,7 +357,7 @@ namespace Project.API.Controllers.V1
             try
             {
                 await _companyService.Delete(id, cancellationToken);
-                
+
                 // Remove data from cache by key
                 _memoryCache.Remove($"Company_{id}");
 
